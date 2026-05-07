@@ -202,3 +202,13 @@ CodeSignification200OK201Created204No Content (suppression réussie)400Bad Reque
 
 🗓 Historique des versions
 VersionDateChangements0.12026-04-27Setup Django + 5 apps0.22026-04-28Modèles métier (Conversation, Message, FAQEntry, CodeExecution, AuditLog)0.32026-04-28Authentification JWT (register, login, refresh, me)0.42026-04-28Endpoint chat + intégration Gemini (gemini-flash-latest)0.5 (à venir)—Recherche FAQ vectorielle + routage hybride0.6 (à venir)—Endpoint exécution de code (Piston)
+
+## 📊 Admin
+
+### `GET /api/admin/stats/?period=7d|24h|30d|all`
+Tableau de bord statistique pour les administrateurs.
+
+- **Auth** : ✅ Bearer (rôle ADMIN ou SUPER_ADMIN)
+- **Query param** : `period` parmi `24h`, `7d` (défaut), `30d`, `all`
+- **Réponse 200** : objet avec `users`, `conversations`, `messages` (dont `savings_pct` et `by_source`), `faq.top_10`, `code_executions`
+- **Erreur 403** : utilisateur sans rôle admin

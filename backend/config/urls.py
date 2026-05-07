@@ -9,5 +9,7 @@ urlpatterns = [
     path("", health),
     path("admin/", admin.site.urls),
     path("api/auth/", include("accounts.urls")),
-    path("api/", include("chat.urls")),  # ← NEW
+    path("api/", include("chat.urls")),
+    path("api/", include("runner.urls")),
+    path("api/", include("core.urls")),  # ← NEW
 ]
