@@ -9,3 +9,9 @@ dist/
 .vscode/
 .idea/
 *.log
+# Docker volumes (runtime data)
+piston-data/
+
+# Helpers PowerShell locaux
+emsi-tools.ps1
+backend/emsi-tools.ps1

@@ -1,3 +1,4 @@
+import math
 import google.generativeai as genai
 from django.conf import settings
 
@@ -54,3 +55,30 @@ def build_history_from_messages(messages) -> list[dict]:
         role = "user" if msg.role == "USER" else "model"
         history.append({"role": role, "parts": [msg.content]})
     return history
+
+    import math
+
+
+EMBEDDING_MODEL = "models/gemini-embedding-001"
+
+
+def get_embedding(text: str) -> list[float]:
+    """Génère un vecteur 768-dim pour un texte."""
+    result = genai.embed_content(
+        model=EMBEDDING_MODEL,
+        content=text,
+        task_type="retrieval_query",  # optimisé pour la recherche
+    )
+    return result["embedding"]
+
+
+def cosine_similarity(a: list[float], b: list[float]) -> float:
+    """Similarité cosinus entre deux vecteurs. Retourne un float entre -1 et 1."""
+    if not a or not b or len(a) != len(b):
+        return 0.0
+    dot = sum(x * y for x, y in zip(a, b))
+    norm_a = math.sqrt(sum(x * x for x in a))
+    norm_b = math.sqrt(sum(x * x for x in b))
+    if norm_a == 0 or norm_b == 0:
+        return 0.0
+    return dot / (norm_a * norm_b)

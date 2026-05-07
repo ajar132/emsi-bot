@@ -105,3 +105,15 @@ SIMPLE_JWT = {
     "USER_ID_FIELD": "id",
     "USER_ID_CLAIM": "user_id",
 }
+
+# Piston (sandbox d'exécution de code)
+PISTON_URL = env("PISTON_URL", default="https://emkc.org/api/v2/piston")
+PISTON_TIMEOUT_S = 10  # marge sur le timeout HTTP côté backend
+
+# Cache (rate limiting, etc.) — LocMem pour dev, à remplacer par Redis en prod
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "emsi-bot-cache",
+    }
+}
