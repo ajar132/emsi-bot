@@ -17,7 +17,9 @@ Système hybride FAQ + LLM (Google Gemini) avec exécution de code.
 - **ZIAD EL YOUSFI** — Frontend & UX
 - **YASSINE ZAIDANY** — DevOps & Données
 
-## 🚀 Démarrage rapide (backend)
+## 🚀 Démarrage rapide
+
+### Backend (Django)
 
 ```bash
 cd backend
@@ -28,13 +30,25 @@ pip install -r requirements.txt
 cp .env.example .env            # puis remplir GEMINI_API_KEY
 python manage.py migrate
 python manage.py seed_faq
-python manage.py runserver
+python manage.py runserver      # → http://127.0.0.1:8000
 ```
+
+### Frontend (React)
+
+> **Prérequis** : Node.js 18+ installé sur votre machine.
+
+```bash
+cd frontend
+npm install     # à faire UNE SEULE FOIS après le clone
+npm run dev     # → http://localhost:5173
+```
+
+Le frontend se connecte automatiquement au backend sur `http://127.0.0.1:8000`.  
+Assurez-vous que le backend tourne **avant** d'ouvrir le frontend.
 
 ## 📚 Documentation
 
 - **API REST** : voir `backend/docs/API.md`
-- **Cahier des charges** : voir `docs/CDC.pdf`
 
 ## 🧪 Tests
 
