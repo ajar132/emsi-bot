@@ -1,4 +1,5 @@
 import BotAvatar from './BotAvatar'
+import CodeBlock from './CodeBlock'
 import type { Message } from '../types'
 
 const SOURCE_BADGE: Record<string, { label: string; cls: string }> = {
@@ -7,27 +8,58 @@ const SOURCE_BADGE: Record<string, { label: string; cls: string }> = {
   HYBRID: { label: 'Hybrid', cls: 'bg-violet-500/20 text-violet-400 border-violet-500/30' },
 }
 
+/* Split message content into text segments and code blocks */
+interface TextPart  { type: 'text'; content: string }
+interface CodePart  { type: 'code'; language: string; code: string }
+type Part = TextPart | CodePart
+
+function parseContent(raw: string): Part[] {
+  const parts: Part[] = []
+  const regex = /```(\w*)\n?([\s\S]*?)```/g
+  let last = 0
+  let match: RegExpExecArray | null
+
+  while ((match = regex.exec(raw)) !== null) {
+    if (match.index > last) parts.push({ type: 'text', content: raw.slice(last, match.index) })
+    parts.push({ type: 'code', language: match[1] || 'plaintext', code: match[2].trimEnd() })
+    last = match.index + match[0].length
+  }
+  if (last < raw.length) parts.push({ type: 'text', content: raw.slice(last) })
+  return parts
+}
+
 export default function MessageBubble({ message }: { message: Message }) {
   const isUser = message.role === 'USER'
   const badge  = SOURCE_BADGE[message.source]
+  const parts  = isUser ? null : parseContent(message.content)
 
   return (
-    <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4 px-6`}>
+    <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4 px-4 md:px-6`}>
       {!isUser && (
         <div className="w-8 h-8 rounded-full bg-violet-600/80 flex items-center justify-center mr-2 mt-0.5 shrink-0 shadow-md shadow-violet-500/20">
           <BotAvatar size={18} className="text-white" />
         </div>
       )}
 
-      <div className={`max-w-[75%] flex flex-col gap-1 ${isUser ? 'items-end' : 'items-start'}`}>
+      <div className={`max-w-[85%] md:max-w-[75%] flex flex-col gap-1 ${isUser ? 'items-end' : 'items-start'}`}>
         <div
-          className={`rounded-2xl px-4 py-2.5 text-sm leading-relaxed whitespace-pre-wrap ${
+          className={`rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
             isUser
               ? 'bg-white text-[#0A0A0B] font-medium rounded-tr-sm'
-              : 'bg-white/[0.05] text-white/90 border border-white/[0.08] backdrop-blur-sm rounded-tl-sm'
+              : 'bg-white/[0.05] text-white/90 border border-white/[0.08] backdrop-blur-sm rounded-tl-sm w-full'
           }`}
         >
-          {message.content}
+          {isUser ? (
+            <span className="whitespace-pre-wrap">{message.content}</span>
+          ) : (
+            parts!.map((part, i) =>
+              part.type === 'text' ? (
+                <span key={i} className="whitespace-pre-wrap">{part.content}</span>
+              ) : (
+                <CodeBlock key={i} language={part.language} code={part.code} />
+              )
+            )
+          )}
         </div>
 
         <div className="flex items-center gap-2">

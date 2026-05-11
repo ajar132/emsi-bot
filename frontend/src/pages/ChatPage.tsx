@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Send, Loader2, Command, Code2, BookOpen, FileText, PenLine } from 'lucide-react'
+import { Send, Loader2, Command, Code2, BookOpen, FileText, PenLine, Menu } from 'lucide-react'
 import Sidebar from '../components/Sidebar'
 import MessageBubble from '../components/MessageBubble'
 import ThinkingDots from '../components/ThinkingDots'
@@ -32,6 +32,7 @@ export default function ChatPage() {
   const [selCmd,        setSelCmd]        = useState(-1)
   const [isFocused,     setIsFocused]     = useState(false)
   const [mousePos,      setMousePos]      = useState({ x: 0, y: 0 })
+  const [sidebarOpen,   setSidebarOpen]   = useState(false)
 
   const { textareaRef, adjustHeight } = useAutoResize({ minHeight: 60, maxHeight: 200 })
   const bottomRef = useRef<HTMLDivElement>(null)
@@ -130,10 +131,25 @@ export default function ChatPage() {
     <div className="flex h-screen overflow-hidden bg-[#0A0A0B]">
       <Sidebar
         conversations={conversations} activeId={activeId}
+        isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)}
         onSelect={setActiveId} onNew={handleNew} onDelete={handleDelete} onLogout={handleLogout}
       />
 
       <main className="flex-1 flex flex-col relative overflow-hidden text-white">
+
+        {/* Mobile header */}
+        <div className="md:hidden flex items-center gap-3 px-4 py-3 border-b border-white/[0.06] relative z-10 shrink-0">
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="p-2 rounded-lg text-white/50 hover:text-white hover:bg-white/5 transition-colors"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+          <div className="flex items-center gap-2">
+            <BotAvatar size={18} className="text-violet-300" />
+            <span className="text-white/80 text-sm font-medium">EMSI Bot</span>
+          </div>
+        </div>
 
         {/* Background orbs */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
