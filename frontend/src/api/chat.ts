@@ -27,4 +27,7 @@ export const chatApi = {
     api
       .post<SendMessageResponse>('/chat/', { content, ...(conversation_id && { conversation_id }) })
       .then(r => r.data),
+
+  executeCode: (language: string, code: string) =>
+    api.post<{ stdout: string; stderr: string }>('/execute/', { language, code }).then(r => r.data),
 }

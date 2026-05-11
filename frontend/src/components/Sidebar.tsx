@@ -1,25 +1,39 @@
+import { AnimatePresence, motion } from 'framer-motion'
 import BotAvatar from './BotAvatar'
 import type { Conversation } from '../types'
 
 interface Props {
   conversations: Conversation[]
   activeId: string | null
+  isOpen: boolean
+  onClose: () => void
   onSelect: (id: string) => void
   onNew: () => void
   onDelete: (id: string) => void
   onLogout: () => void
 }
 
-export default function Sidebar({ conversations, activeId, onSelect, onNew, onDelete, onLogout }: Props) {
+function SidebarContent({ conversations, activeId, onSelect, onNew, onDelete, onLogout, onClose }: Omit<Props, 'isOpen'>) {
   return (
-    <aside className="w-64 shrink-0 bg-gray-900 flex flex-col h-screen">
+    <aside className="w-64 shrink-0 bg-gray-900 flex flex-col h-full">
       {/* Header */}
       <div className="p-4 border-b border-gray-700">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-8 h-8 rounded-lg bg-violet-600 flex items-center justify-center shrink-0">
-            <BotAvatar size={18} className="text-white" />
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-violet-600 flex items-center justify-center shrink-0">
+              <BotAvatar size={18} className="text-white" />
+            </div>
+            <span className="text-white font-semibold">EMSI Bot</span>
           </div>
-          <span className="text-white font-semibold">EMSI Bot</span>
+          {/* Close button — only visible on mobile */}
+          <button
+            onClick={onClose}
+            className="md:hidden p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition-colors"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
         </div>
         <button
           onClick={onNew}
@@ -45,7 +59,7 @@ export default function Sidebar({ conversations, activeId, onSelect, onNew, onDe
             className={`group flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-colors ${
               activeId === conv.id ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-800'
             }`}
-            onClick={() => onSelect(conv.id)}
+            onClick={() => { onSelect(conv.id); onClose() }}
           >
             <svg className="w-3.5 h-3.5 shrink-0 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -84,5 +98,44 @@ export default function Sidebar({ conversations, activeId, onSelect, onNew, onDe
         </button>
       </div>
     </aside>
+  )
+}
+
+export default function Sidebar(props: Props) {
+  const { isOpen, onClose } = props
+
+  return (
+    <>
+      {/* Desktop: always visible */}
+      <div className="hidden md:flex h-screen">
+        <SidebarContent {...props} />
+      </div>
+
+      {/* Mobile: slide-in drawer */}
+      <AnimatePresence>
+        {isOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              className="fixed inset-0 z-40 bg-black/60 md:hidden"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={onClose}
+            />
+            {/* Drawer */}
+            <motion.div
+              className="fixed inset-y-0 left-0 z-50 md:hidden flex"
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ type: 'spring', stiffness: 320, damping: 32 }}
+            >
+              <SidebarContent {...props} />
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </>
   )
 }
