@@ -56,8 +56,6 @@ def build_history_from_messages(messages) -> list[dict]:
         history.append({"role": role, "parts": [msg.content]})
     return history
 
-    import math
-
 
 EMBEDDING_MODEL = "models/gemini-embedding-001"
 

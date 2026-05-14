@@ -26,6 +26,17 @@ export interface Conversation {
   updated_at: string
 }
 
+export interface FAQEntry {
+  id: string
+  question: string
+  answer: string
+  category: string
+  hit_count: number
+  created_by_email: string
+  created_at: string
+  updated_at: string
+}
+
 export interface AuthTokens {
   access: string
   refresh: string

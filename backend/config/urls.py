@@ -11,5 +11,6 @@ urlpatterns = [
     path("api/auth/", include("accounts.urls")),
     path("api/", include("chat.urls")),
     path("api/", include("runner.urls")),
-    path("api/", include("core.urls")),  # ← NEW
+    path("api/", include("core.urls")),
+    path("api/", include("knowledge.urls")),
 ]

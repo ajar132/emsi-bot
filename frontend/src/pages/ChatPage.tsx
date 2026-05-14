@@ -20,7 +20,9 @@ const COMMANDS = [
 
 export default function ChatPage() {
   const navigate = useNavigate()
-  const logout   = useAuthStore(s => s.logout)
+  const logout  = useAuthStore(s => s.logout)
+  const user    = useAuthStore(s => s.user)
+  const isAdmin = user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN'
 
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [activeId,      setActiveId]      = useState<string | null>(null)
@@ -132,6 +134,7 @@ export default function ChatPage() {
       <Sidebar
         conversations={conversations} activeId={activeId}
         isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)}
+        isAdmin={isAdmin} onAdmin={() => navigate('/admin')}
         onSelect={setActiveId} onNew={handleNew} onDelete={handleDelete} onLogout={handleLogout}
       />
 

@@ -1,4 +1,32 @@
 services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: emsi
+      POSTGRES_PASSWORD: emsi
+      POSTGRES_DB: emsi_bot
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  backend:
+    build: ./backend
+    env_file: .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgres://emsi:emsi@db:5432/emsi_bot
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
   piston:
     image: ghcr.io/engineer-man/piston
     container_name: piston
@@ -10,3 +38,6 @@ services:
       - ./piston-data/packages:/piston/packages
     tmpfs:
       - /piston/jobs:exec,uid=1000,gid=1000,mode=711
+
+volumes:
+  postgres_data:

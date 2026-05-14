@@ -35,6 +35,9 @@ def execute_code(language: str, code: str, stdin: str = "") -> dict:
     extensions = {"python": "py", "javascript": "js", "typescript": "ts", "java": "java", "c": "c", "cpp": "cpp"}
     ext = extensions.get(language, "txt")
 
+    # Normalize line endings — Windows textarea sends \r\n, Python input() keeps \r
+    stdin = stdin.replace("\r\n", "\n").replace("\r", "\n")
+
     payload = {
         "language": language,
         "version": LANGUAGE_VERSIONS[language],
